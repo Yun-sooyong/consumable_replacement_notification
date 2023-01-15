@@ -6,6 +6,20 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Container();
+    return Scaffold(
+      floatingActionButton: IconButton(
+        onPressed: () {},
+        icon: const Icon(Icons.add),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
+        child: ListView.builder(
+          itemCount: 1,
+          itemBuilder: (context, index) {
+            return Container();
+          },
+        ),
+      ),
+    );
   }
 }
