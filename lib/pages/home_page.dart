@@ -1,14 +1,21 @@
+import 'package:consumable_replacement_notification/firebase/auth/google_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class HomePage extends ConsumerWidget {
-  const HomePage({super.key});
+  const HomePage({
+    super.key,
+    //required List actions
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    GoogleFirebaseAuth googleFirebaseAuth = GoogleFirebaseAuth();
     return Scaffold(
       floatingActionButton: IconButton(
-        onPressed: () {},
+        onPressed: () {
+          googleFirebaseAuth.logoutWithGoogle();
+        },
         icon: const Icon(Icons.add),
       ),
       body: Padding(
@@ -16,7 +23,9 @@ class HomePage extends ConsumerWidget {
         child: ListView.builder(
           itemCount: 1,
           itemBuilder: (context, index) {
-            return Container();
+            return const Center(
+              child: Text('Home'),
+            );
           },
         ),
       ),

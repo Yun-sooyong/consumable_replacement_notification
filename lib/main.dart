@@ -1,11 +1,14 @@
 import 'package:consumable_replacement_notification/firebase_options.dart';
-import 'package:consumable_replacement_notification/pages/home_page.dart';
+import 'package:consumable_replacement_notification/pages/splash_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await dotenv.load(fileName: '.env');
+
   runApp(const MyApp());
 }
 
@@ -16,11 +19,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HomePage(),
+      home: const SplahPage(),
     );
   }
 }
