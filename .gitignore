@@ -135,3 +135,4 @@ app.*.symbols
 # Other 
 *.env
 /lib/firebase_options.dart
+/lib/android/app/google-services.json

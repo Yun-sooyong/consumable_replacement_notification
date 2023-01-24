@@ -10,9 +10,10 @@ class LoginPage extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
+        appBar: AppBar(),
         body: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [Text('logined')],
-    ));
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [Text('logined')],
+        ));
   }
 }

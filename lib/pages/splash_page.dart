@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:consumable_replacement_notification/pages/home_page.dart';
+import 'package:consumable_replacement_notification/pages/welcom_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,7 +28,7 @@ class _SplahPageState extends State<SplahPage> {
       result == null
           ? Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => const LoginPage()),
+              MaterialPageRoute(builder: (context) => const WelcomePage()),
               (route) => false)
           : Navigator.pushAndRemoveUntil(
               context,
