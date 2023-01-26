@@ -4,7 +4,6 @@ import 'package:consumable_replacement_notification/pages/welcom_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'login_page.dart';
 
 /// 스플래시 스크린을 하나 만들던지 홈페이지에 화면을 덮어 씌우고 시간이 지나면 보이도록 하던지 선택
 ///

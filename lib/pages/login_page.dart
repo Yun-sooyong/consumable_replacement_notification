@@ -11,9 +11,8 @@ class LoginPage extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [Text('logined')],
+        body: Center(
+          child: Text('logined Page'),
         ));
   }
 }
