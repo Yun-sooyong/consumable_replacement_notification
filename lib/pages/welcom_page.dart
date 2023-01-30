@@ -2,70 +2,81 @@
 
 import 'package:consumable_replacement_notification/firebase/auth/google_auth.dart';
 import 'package:consumable_replacement_notification/pages/home_page.dart';
-import 'package:consumable_replacement_notification/pages/login_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class WelcomePage extends StatelessWidget {
+class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
+
+  @override
+  State<WelcomePage> createState() => _WelcomePageState();
+}
+
+class _WelcomePageState extends State<WelcomePage> {
+  final PageController _pageViewController = PageController(initialPage: 0);
+
+  @override
+  void dispose() {
+    super.dispose();
+    _pageViewController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
     return Scaffold(
-      backgroundColor: Colors.grey.shade200,
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
+            SizedBox(
               height: size.height * 0.5,
               width: size.width,
-              color: Colors.orange,
-            ),
-            SizedBox(
-              height: size.height * 0.015,
-            ),
-            // 시작하기 => 로그인 페이지
-            SizedBox(
-              width: size.width * 0.8,
-              height: size.height * 0.05,
-              child: OutlinedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginPage(),
-                    ),
-                  );
-                },
-                style: ButtonStyle(
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.grey.shade200),
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.black),
-                    side:
-                        MaterialStateProperty.all<BorderSide>(BorderSide.none)),
-                child: const Text('시작하기'),
+              child: PageView(
+                controller: _pageViewController,
+                children: [
+                  Container(
+                    color: Colors.red,
+                  ),
+                  Container(
+                    color: Colors.green,
+                  ),
+                  Container(
+                    color: Colors.blue,
+                  ),
+                ],
               ),
             ),
             SizedBox(
-              height: size.height * 0.015,
+              height: size.height * 0.03,
+              child: SmoothPageIndicator(
+                controller: _pageViewController,
+                count: 3,
+                effect: const WormEffect(
+                  dotHeight: 10.0,
+                  dotWidth: 10.0,
+                ),
+              ),
             ),
+            SizedBox(
+              height: size.height * 0.02,
+            ),
+
             //구글로 로그인 => 구글 로그인
             SizedBox(
               width: size.width * 0.8,
               height: size.height * 0.05,
               child: OutlinedButton(
-                onPressed: () {
-                  GoogleFirebaseAuth()
-                      .signinWithGoogle()
-                      .then((value) => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const HomePage()),
-                          ));
+                onPressed: () async {
+                  await GoogleFirebaseAuth().signinWithGoogle().then((value) =>
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const HomePage())));
                 },
                 style: ButtonStyle(
                   foregroundColor: MaterialStateProperty.all<Color>(
