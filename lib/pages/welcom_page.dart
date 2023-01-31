@@ -2,9 +2,7 @@
 
 import 'package:consumable_replacement_notification/firebase/auth/google_auth.dart';
 import 'package:consumable_replacement_notification/pages/home_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class WelcomePage extends StatefulWidget {
