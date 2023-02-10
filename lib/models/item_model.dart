@@ -11,9 +11,9 @@ import 'dart:convert';
 class Item {
   String title;
   String explane;
-  int classifi;
-  String replaceDate;
-  String periods;
+  int classifi; // or bool
+  String replaceDate; // type change Date
+  String periods; // type change Date
   Item({
     required this.title,
     required this.explane,

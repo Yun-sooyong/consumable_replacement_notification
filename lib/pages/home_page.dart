@@ -1,5 +1,6 @@
 import 'package:consumable_replacement_notification/firebase/auth/google_auth.dart';
 import 'package:consumable_replacement_notification/firebase/firestore/firestore.dart';
+import 'package:consumable_replacement_notification/models/item_model.dart';
 import 'package:consumable_replacement_notification/pages/welcom_page.dart';
 import 'package:consumable_replacement_notification/pages/widgets/add_sheet.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,6 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<Classify> classify = [];
   List<Widget> tabList = const [
     Tab(text: '전체'),
     Tab(text: '소모품'),
@@ -29,6 +31,10 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     userInfo = FirebaseAuth.instance.currentUser;
     fireStore = FireStoreDB(userInfo!.uid);
+
+    classify.add(Classify('소모품', false));
+    classify.add(Classify('기념일', false));
+
     super.initState();
   }
 
@@ -69,7 +75,7 @@ class _HomePageState extends State<HomePage> {
         floatingActionButton: FloatingActionButton(
           backgroundColor: Theme.of(context).colorScheme.secondary,
           onPressed: () {
-            addSheet(context, size.height * 0.8);
+            _addItemSheet(size);
           },
           child: const Icon(Icons.add),
         ),
@@ -120,6 +126,117 @@ class _HomePageState extends State<HomePage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
       child: ListTile(
         title: text,
+      ),
+    );
+  }
+
+  Future _addItemSheet(Size size) {
+    Item item;
+    final TextEditingController titleController = TextEditingController();
+    final TextEditingController explaneController = TextEditingController();
+
+    return showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)),
+        builder: (context) {
+          return StatefulBuilder(builder: (context, StateSetter bottomState) {
+            return Container(
+              height: size.height * 0.8,
+              color: Theme.of(context).colorScheme.background,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('분류'),
+                    _customRadio(bottomState),
+                    const Text('이름'),
+                    TextField(
+                      controller: titleController,
+                      onEditingComplete: () {},
+                    ),
+                    const Text('설명'),
+                    TextField(
+                      controller: explaneController,
+                    ),
+                    const Text('날짜 선택'),
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: Size.fromWidth(size.width),
+                      ),
+                      child: const Text('날짜 선택'),
+                    ),
+                    const Text('알람 주기'),
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: Size.fromWidth(size.width),
+                      ),
+                      child: const Text('날짜 선택'),
+                    ),
+                    SizedBox(height: size.height * 0.03),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: Size.fromWidth(size.width * 0.42),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('취소'),
+                        ),
+                        const SizedBox(width: 15),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: Size.fromWidth(size.width * 0.42),
+                          ),
+                          onPressed: () {
+                            //item = Item(title: titleController.text, explane: explaneController.text);
+                          },
+                          child: const Text('저장'),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            );
+          });
+        });
+  }
+
+  Widget _customRadio(StateSetter bottomState) {
+    return SizedBox(
+      height: 40,
+      width: 140,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        shrinkWrap: true,
+        itemCount: classify.length,
+        itemBuilder: (context, index) {
+          return InkWell(
+            onTap: () {
+              bottomState(
+                () {
+                  setState(() {
+                    for (var element in classify) {
+                      element.isSelected = false;
+                    }
+                    classify[index].isSelected = true;
+                  });
+                },
+              );
+            },
+            child: CustomRadio(classify[index]),
+          );
+        },
       ),
     );
   }

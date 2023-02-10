@@ -1,82 +1,35 @@
 import 'package:flutter/material.dart';
 
-dynamic addSheet(BuildContext context, double height) {
-  Size size = MediaQuery.of(context).size;
-  return showModalBottomSheet(
-    context: context,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-    isScrollControlled: true,
-    builder: (context) {
-      return Container(
-        height: height,
-        color: Theme.of(context).colorScheme.background,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('분류'),
-              const SizedBox(
-                height: 50,
-                child: Placeholder(),
-              ),
-              const Text('이름'),
-              const TextField(),
-              const Text('설명'),
-              const TextField(),
-              const Text('날짜 선택'),
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  fixedSize: Size.fromWidth(size.width),
-                ),
-                child: Text('날짜 선택'),
-              ),
-              const Text('알람 주기'),
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  fixedSize: Size.fromWidth(size.width),
-                ),
-                child: Text('날짜 선택'),
-              ),
-              SizedBox(height: size.height * 0.03),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      fixedSize: Size.fromWidth(size.width * 0.42),
-                    ),
-                    onPressed: () {},
-                    child: Text('취소'),
-                  ),
-                  const SizedBox(width: 15),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      fixedSize: Size.fromWidth(size.width * 0.42),
-                    ),
-                    onPressed: () {},
-                    child: Text('저장'),
-                  ),
-                ],
-              )
-            ],
-          ),
-        ),
-      );
-    },
-  );
+class Classify {
+  String title;
+  bool isSelected;
+
+  Classify(this.title, this.isSelected);
 }
 
-void cancel() {}
+class CustomRadio extends StatelessWidget {
+  final Classify _classify;
+  const CustomRadio(this._classify, {super.key});
 
-Text _text(String string) {
-  return Text(
-    string,
-    style: const TextStyle(
-      fontSize: 18.0,
-    ),
-  );
+  @override
+  Widget build(BuildContext context) {
+    var themeColor = Theme.of(context).colorScheme;
+    return Card(
+      color: _classify.isSelected ? themeColor.primary : themeColor.background,
+      child: Container(
+        height: 20,
+        width: 50,
+        alignment: Alignment.center,
+        margin: const EdgeInsets.all(5),
+        child: Text(
+          _classify.title,
+          style: TextStyle(
+            color: _classify.isSelected
+                ? themeColor.background
+                : themeColor.primary,
+          ),
+        ),
+      ),
+    );
+  }
 }
