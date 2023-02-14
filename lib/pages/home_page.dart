@@ -1,6 +1,7 @@
 import 'package:consumable_replacement_notification/firebase/auth/google_auth.dart';
 import 'package:consumable_replacement_notification/firebase/firestore/firestore.dart';
 import 'package:consumable_replacement_notification/models/item_model.dart';
+import 'package:consumable_replacement_notification/pages/add_item_page.dart';
 import 'package:consumable_replacement_notification/pages/welcom_page.dart';
 import 'package:consumable_replacement_notification/pages/widgets/add_sheet.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -75,7 +76,8 @@ class _HomePageState extends State<HomePage> {
         floatingActionButton: FloatingActionButton(
           backgroundColor: Theme.of(context).colorScheme.secondary,
           onPressed: () {
-            _addItemSheet(size);
+            //_addItemSheet(size);
+            showStatefulWidgetBottomSheet(context);
           },
           child: const Icon(Icons.add),
         ),
@@ -131,6 +133,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future _addItemSheet(Size size) {
+    // TODO 분류를 어떻게 나눌 건가, 날짜 선택을 위한 패키지 선정, 선택된 날짜와 알림 주기를 계산해서 토스트로 출력하고 결과값은 item에 저장해서 list에 표시,
     Item item;
     final TextEditingController titleController = TextEditingController();
     final TextEditingController explaneController = TextEditingController();
@@ -183,24 +186,37 @@ class _HomePageState extends State<HomePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            fixedSize: Size.fromWidth(size.width * 0.42),
+                        SizedBox(
+                          height: 50,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              fixedSize: Size.fromWidth(size.width * 0.42),
+                              backgroundColor:
+                                  Theme.of(context).primaryColorDark,
+                            ),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('취소'),
                           ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text('취소'),
                         ),
                         const SizedBox(width: 15),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            fixedSize: Size.fromWidth(size.width * 0.42),
+                        SizedBox(
+                          height: 50,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              fixedSize: Size.fromWidth(size.width * 0.42),
+                              backgroundColor:
+                                  Theme.of(context).primaryColorDark,
+                            ),
+                            onPressed: titleController.text == '' ||
+                                    explaneController.text == ''
+                                ? null
+                                : () {
+                                    //item = Item(title: titleController.text, explane: explaneController.text);
+                                  },
+                            child: const Text('저장'),
                           ),
-                          onPressed: () {
-                            //item = Item(title: titleController.text, explane: explaneController.text);
-                          },
-                          child: const Text('저장'),
                         ),
                       ],
                     )
