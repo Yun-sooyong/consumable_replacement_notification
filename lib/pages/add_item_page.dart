@@ -273,6 +273,7 @@ class _StatefulSheet extends State<StatefulSheet> {
       itemExtent: 50,
       textScaleFactor: 1.1,
       title: const Text("날짜를 지정해주세요"),
+      backgroundColor: theme.background,
       selectedTextStyle: TextStyle(color: theme.primary),
       onConfirm: (Picker picker, List value) {
         setState(() {
