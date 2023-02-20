@@ -251,7 +251,7 @@ class _StatefulSheet extends State<StatefulSheet> {
         textScaleFactor: 1.1,
         title: const Text("(교체/기념)할 날짜를 선택해주세요"),
         selectedTextStyle: TextStyle(color: theme.primary),
-        containerColor: Colors.amber,
+        //containerColor: Colors.amber,
         cancelText: '취소',
         confirmText: '선택',
         onConfirm: (Picker picker, List value) {
@@ -264,11 +264,16 @@ class _StatefulSheet extends State<StatefulSheet> {
   }
 
   showPickerDate(BuildContext context) {
+    ColorScheme theme = Theme.of(context).colorScheme;
+
     Picker(
       hideHeader: true,
       adapter: DateTimePickerAdapter(),
-      title: const Text("Select Data"),
-      selectedTextStyle: const TextStyle(color: Colors.blue),
+      height: 230,
+      itemExtent: 50,
+      textScaleFactor: 1.1,
+      title: const Text("날짜를 지정해주세요"),
+      selectedTextStyle: TextStyle(color: theme.primary),
       onConfirm: (Picker picker, List value) {
         setState(() {
           date = (picker.adapter as DateTimePickerAdapter).value;
