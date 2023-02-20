@@ -20,6 +20,7 @@ dependencies:
   flutter_picker: ^2.1.0
   google_sign_in: ^5.4.3
   http: ^0.13.5
+  intl: ^0.17.0
   smooth_page_indicator: ^1.0.0+2
   toggle_switch: ^2.0.1
 

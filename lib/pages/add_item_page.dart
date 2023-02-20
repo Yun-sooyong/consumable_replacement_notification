@@ -1,7 +1,11 @@
-import 'dart:math';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_picker/flutter_picker.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+import 'package:intl/intl.dart';
+
+import '../models/picker_data.dart';
 
 Future<dynamic> showStatefulWidgetBottomSheet(BuildContext context) async {
   await showModalBottomSheet(
@@ -29,10 +33,11 @@ class _StatefulSheet extends State<StatefulSheet> {
     super.dispose();
   }
 
-  String title = '';
-  String explane = '';
-  late int kinds;
-  //late Date startDate;
+  String? title;
+  String? explane;
+  int? classifi;
+  DateTime? date;
+  String? periods;
 
   @override
   Widget build(BuildContext context) {
@@ -56,19 +61,19 @@ class _StatefulSheet extends State<StatefulSheet> {
                   minWidth: 80.0,
                   cornerRadius: 20.0,
                   activeBgColors: [
-                    [Colors.amber[800]!],
-                    [Colors.amber[800]!]
+                    [Theme.of(context).colorScheme.primary],
+                    [Theme.of(context).colorScheme.primary],
                   ],
                   activeFgColor: Colors.white,
-                  inactiveBgColor: Colors.grey,
-                  inactiveFgColor: Colors.white,
+                  inactiveBgColor: Theme.of(context).colorScheme.background,
+                  inactiveFgColor: Theme.of(context).unselectedWidgetColor,
                   initialLabelIndex: 1,
                   totalSwitches: 2,
                   labels: const ['소모품', '기념일'],
                   radiusStyle: true,
                   onToggle: (index) {
-                    kinds = index!;
-                    print('switched to: $kinds');
+                    classifi = index!;
+                    print('switched to: $classifi');
                   },
                 )
               ],
@@ -81,7 +86,7 @@ class _StatefulSheet extends State<StatefulSheet> {
                   style: textStyle(),
                 ),
                 Text(
-                  title,
+                  title == null ? '' : title!,
                 ),
                 TextButton(
                   child: const Text('입력 하기'),
@@ -99,7 +104,7 @@ class _StatefulSheet extends State<StatefulSheet> {
                   style: textStyle(),
                 ),
                 Text(
-                  explane,
+                  explane == null ? '' : explane!,
                 ),
                 TextButton(
                   child: const Text('입력 하기'),
@@ -116,9 +121,15 @@ class _StatefulSheet extends State<StatefulSheet> {
                   '날짜 선택',
                   style: textStyle(),
                 ),
+                Text(date == null
+                    ? ''
+                    : DateFormat('yyyy년 MM월 dd일').format(date!)),
                 TextButton(
                   child: const Text('선택 하기'),
-                  onPressed: () {},
+                  onPressed: () {
+                    //showPickerArray(context);
+                    showPickerDate(context);
+                  },
                 ),
               ],
             ),
@@ -129,9 +140,12 @@ class _StatefulSheet extends State<StatefulSheet> {
                   '반복 간격',
                   style: textStyle(),
                 ),
+                Text(periods == null ? '' : periods.toString()),
                 TextButton(
                   child: const Text('선택 하기'),
-                  onPressed: () {},
+                  onPressed: () {
+                    showPickerArray(context);
+                  },
                 ),
               ],
             ),
@@ -154,11 +168,17 @@ class _StatefulSheet extends State<StatefulSheet> {
                     ),
                   ),
                 ),
+                // TODO 전부 입력이 된게 확인이 되면 저장을 눌렀을때 firestore에 저장
                 SizedBox(
                   height: 50,
                   width: size.width * 0.42,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: title == null ||
+                            explane == null ||
+                            date == null ||
+                            periods == null
+                        ? null
+                        : () {},
                     child: const Text('저장'),
                   ),
                 ),
@@ -215,5 +235,46 @@ class _StatefulSheet extends State<StatefulSheet> {
         );
       },
     );
+  }
+
+  showPickerArray(BuildContext context) {
+    ColorScheme theme = Theme.of(context).colorScheme;
+    Picker(
+        adapter: PickerDataAdapter<String>(
+          pickerData: const JsonDecoder().convert(pickerData),
+          isArray: true,
+        ),
+        hideHeader: true,
+        backgroundColor: theme.background,
+        height: 230,
+        itemExtent: 50,
+        textScaleFactor: 1.1,
+        title: const Text("(교체/기념)할 날짜를 선택해주세요"),
+        selectedTextStyle: TextStyle(color: theme.primary),
+        containerColor: Colors.amber,
+        cancelText: '취소',
+        confirmText: '선택',
+        onConfirm: (Picker picker, List value) {
+          setState(() {
+            periods = value.toString();
+          });
+          print(
+              '${value[0].toString()}년 ${value[1].toString()}개월 ${(value[2]).toString()}주 마다');
+        }).showDialog(context);
+  }
+
+  showPickerDate(BuildContext context) {
+    Picker(
+      hideHeader: true,
+      adapter: DateTimePickerAdapter(),
+      title: const Text("Select Data"),
+      selectedTextStyle: const TextStyle(color: Colors.blue),
+      onConfirm: (Picker picker, List value) {
+        setState(() {
+          date = (picker.adapter as DateTimePickerAdapter).value;
+        });
+        //print((picker.adapter as DateTimePickerAdapter).value);
+      },
+    ).showDialog(context);
   }
 }
