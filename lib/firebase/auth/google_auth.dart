@@ -16,3 +16,9 @@ class GoogleFirebaseAuth {
     await FirebaseAuth.instance.signOut();
   }
 }
+// TODO handle 및 로그인 다시 만들기 
+// class HandledGoogleAuth {
+//   Future<void> _handleGetConnect() {
+    
+//   }
+// }

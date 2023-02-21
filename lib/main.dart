@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: '알려줄 게',
       themeMode: ThemeMode.system,
       theme: FlexThemeData.light(
         scheme: FlexScheme.indigo,
