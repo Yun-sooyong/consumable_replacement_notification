@@ -92,12 +92,20 @@ class _StatefulSheet extends State<StatefulSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  '이름',
-                  style: textStyle(),
+                SizedBox(
+                  width: 80,
+                  child: Text(
+                    '이름',
+                    style: textStyle(),
+                  ),
                 ),
-                Text(
-                  title == null ? '' : title!,
+                SizedBox(
+                  width: 150,
+                  child: Text(
+                    title == null ? '' : title!,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.start,
+                  ),
                 ),
                 TextButton(
                   child: const Text('입력 하기'),
@@ -110,12 +118,20 @@ class _StatefulSheet extends State<StatefulSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  '설명',
-                  style: textStyle(),
+                SizedBox(
+                  width: 80,
+                  child: Text(
+                    '설명',
+                    style: textStyle(),
+                  ),
                 ),
-                Text(
-                  explane == null ? '' : explane!,
+                SizedBox(
+                  width: 150,
+                  child: Text(
+                    explane == null ? '' : explane!,
+                    overflow: TextOverflow.ellipsis,
+                    //textAlign: TextAlign.start,
+                  ),
                 ),
                 TextButton(
                   child: const Text('입력 하기'),
@@ -128,13 +144,20 @@ class _StatefulSheet extends State<StatefulSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  '날짜 선택',
-                  style: textStyle(),
+                SizedBox(
+                  width: 80,
+                  child: Text(
+                    '날짜 선택',
+                    style: textStyle(),
+                  ),
                 ),
-                Text(date == null
-                    ? ''
-                    : DateFormat('yyyy년 MM월 dd일').format(date!)),
+                SizedBox(
+                  width: 150,
+                  child: Text(
+                    date == null ? '' : DateFormat('MM월 dd일').format(date!),
+                    textAlign: TextAlign.start,
+                  ),
+                ),
                 TextButton(
                   child: const Text('선택 하기'),
                   onPressed: () {
@@ -146,11 +169,17 @@ class _StatefulSheet extends State<StatefulSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  '반복 간격',
-                  style: textStyle(),
+                SizedBox(
+                  width: 80,
+                  child: Text(
+                    '반복 간격',
+                    style: textStyle(),
+                  ),
                 ),
-                Text(periods.toString()),
+                SizedBox(
+                  width: 150,
+                  child: Text(periods.toString()),
+                ),
                 TextButton(
                   onPressed: classifi == 1
                       ? null
@@ -220,7 +249,6 @@ class _StatefulSheet extends State<StatefulSheet> {
     );
   }
 
-  //TODO 글자수 제한 50자 + sheet에서 글자수가 크기를 넘어가면 ...으로 표시
   dynamic showDialogForTextField(int value, TextEditingController controller) {
     return showDialog(
       context: context,
@@ -235,7 +263,10 @@ class _StatefulSheet extends State<StatefulSheet> {
                   '내용을 입력하세요',
                   style: TextStyle(fontSize: 19),
                 ),
-          content: TextField(controller: controller),
+          content: TextField(
+            controller: controller,
+            maxLength: 30,
+          ),
           actions: [
             TextButton(
               onPressed: () {
@@ -266,7 +297,6 @@ class _StatefulSheet extends State<StatefulSheet> {
   showPickerArray(BuildContext context) {
     ColorScheme theme = Theme.of(context).colorScheme;
     Picker(
-        // adapter 를 DateTimePickerAdapter 교체하고 커스텀 ??
         adapter: PickerDataAdapter<String>(
           pickerData: const JsonDecoder().convert(pickerData),
           isArray: true,
@@ -299,7 +329,7 @@ class _StatefulSheet extends State<StatefulSheet> {
       adapter: DateTimePickerAdapter(
         //type: 7,
         customColumnType: [1, 2],
-        months: MonthsList_KO,
+        isNumberMonth: true,
         yearBegin: currentYear,
         yearEnd: currentYear,
         monthSuffix: '월',
