@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:consumable_replacement_notification/firebase/auth/google_auth.dart';
 import 'package:consumable_replacement_notification/firebase/firestore/firestore.dart';
 import 'package:consumable_replacement_notification/pages/add_item_page.dart';
@@ -80,7 +81,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   // _body
-  // TODO 필드의 classifi에 맞게 list를 만들어서 출력
   Widget _body() {
     return Padding(
       padding: const EdgeInsets.all(14.0),
@@ -98,30 +98,31 @@ class _HomePageState extends State<HomePage> {
               child: Text('Error'),
             );
           } else {
-            final value = snapshot.data?.docs;
+            final List<QueryDocumentSnapshot<Object?>> documents =
+                (snapshot.data?.docs)!;
 
             return TabBarView(
               children: [
                 ListView.builder(
-                  itemCount: value.length,
+                  itemCount: documents.length,
                   itemBuilder: (context, index) {
-                    return _viewCard(value: value[index]);
+                    return _viewCard(documents[index]);
                   },
                 ),
                 ListView.builder(
-                  itemCount: value.length,
+                  itemCount: documents.length,
                   itemBuilder: (context, index) {
-                    if (value[index]['classifi'] == 0) {
-                      return _viewCard(value: value[index]);
+                    if (documents[index]['classifi'] == 0) {
+                      return _viewCard(documents[index]);
                     }
                     return const SizedBox();
                   },
                 ),
                 ListView.builder(
-                  itemCount: value.length,
+                  itemCount: documents.length,
                   itemBuilder: (context, index) {
-                    if (value[index]['classifi'] == 1) {
-                      return _viewCard(value: value[index]);
+                    if (documents[index]['classifi'] == 1) {
+                      return _viewCard(documents[index]);
                     }
                     return const SizedBox();
                   },
@@ -135,7 +136,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   // main view card
-  Widget _viewCard({required var value}) {
+  Widget _viewCard(var documents) {
     const List<String> list = ['수정', '삭제'];
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -149,24 +150,25 @@ class _HomePageState extends State<HomePage> {
         child: Padding(
           padding: const EdgeInsets.all(4.0),
           child: ListTile(
-            title: Text(value['title']),
-            subtitle: Text(value['explane']),
+            title: Text(documents['title']),
+            subtitle: Text(documents['explane']),
             trailing: DropdownButton<String>(
               icon: const Icon(Icons.more_vert),
               elevation: 4,
               underline: Container(height: 0),
-              onChanged: (value) {
+              onChanged: (list) {
                 setState(() {
-                  if (value == '수정') {}
-                  if (value == '삭제') {
-                    FireStoreUsage().delete();
+                  if (list == '수정') {}
+                  if (list == '삭제') {
+                    _fireStore.delete(documents);
+                    //value.reference.delete();
                   }
                 });
               },
-              items: list.map<DropdownMenuItem<String>>((String value) {
+              items: list.map<DropdownMenuItem<String>>((String menuItem) {
                 return DropdownMenuItem(
-                  value: value,
-                  child: Text(value),
+                  value: menuItem,
+                  child: Text(menuItem),
                 );
               }).toList(),
             ),

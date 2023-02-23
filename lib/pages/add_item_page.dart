@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:consumable_replacement_notification/firebase/firestore/firestore.dart';
 import 'package:consumable_replacement_notification/models/item_model.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:toggle_switch/toggle_switch.dart';
@@ -181,7 +180,6 @@ class _StatefulSheet extends State<StatefulSheet> {
                     ),
                   ),
                 ),
-                // TODO 전부 입력이 된게 확인이 되면 저장을 눌렀을때 firestore에 저장
                 SizedBox(
                   height: 50,
                   width: size.width * 0.42,
@@ -241,6 +239,7 @@ class _StatefulSheet extends State<StatefulSheet> {
           actions: [
             TextButton(
               onPressed: () {
+                controller.clear();
                 Navigator.pop(context);
               },
               child: const Text('취소'),
@@ -264,10 +263,10 @@ class _StatefulSheet extends State<StatefulSheet> {
     );
   }
 
-  // TODO 소모품/기념일을 분류의 상태에 맞춰서
   showPickerArray(BuildContext context) {
     ColorScheme theme = Theme.of(context).colorScheme;
     Picker(
+        // adapter 를 DateTimePickerAdapter 교체하고 커스텀 ??
         adapter: PickerDataAdapter<String>(
           pickerData: const JsonDecoder().convert(pickerData),
           isArray: true,
@@ -293,10 +292,19 @@ class _StatefulSheet extends State<StatefulSheet> {
 
   showPickerDate(BuildContext context) {
     ColorScheme theme = Theme.of(context).colorScheme;
+    int currentYear = int.parse(DateFormat('yyyy').format(DateTime.now()));
 
     Picker(
       hideHeader: true,
-      adapter: DateTimePickerAdapter(),
+      adapter: DateTimePickerAdapter(
+        //type: 7,
+        customColumnType: [1, 2],
+        months: MonthsList_KO,
+        yearBegin: currentYear,
+        yearEnd: currentYear,
+        monthSuffix: '월',
+        daySuffix: '일',
+      ),
       height: 230,
       itemExtent: 50,
       textScaleFactor: 1.1,
@@ -307,7 +315,6 @@ class _StatefulSheet extends State<StatefulSheet> {
         setState(() {
           date = (picker.adapter as DateTimePickerAdapter).value;
         });
-        //print((picker.adapter as DateTimePickerAdapter).value);
       },
       cancelText: '취소',
       confirmText: '확인',

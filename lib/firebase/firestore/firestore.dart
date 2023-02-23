@@ -5,36 +5,33 @@ import 'package:firebase_auth/firebase_auth.dart';
 class FireStoreUsage {
   FireStoreUsage();
 
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
   final String uid = FirebaseAuth.instance.currentUser!.uid;
 
-  Stream read() {
-    return firestore
+  CollectionReference _getCollection() {
+    return FirebaseFirestore.instance
         .collection('users')
         .doc(uid)
-        .collection('items')
-        .snapshots();
+        .collection('items');
   }
 
-  bool write(Item item) {
-    try {
-      CollectionReference items = FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .collection('items');
+  Stream<QuerySnapshot> read() {
+    return _getCollection().snapshots();
+  }
 
-      //items.doc(item.title).set(item.toJson());
-      items.add(item.toJson());
+  void write(Item item) {
+    try {
+      _getCollection().add(item.toJson());
     } on FirebaseException catch (e) {
       print(e);
-      return false;
     }
-
-    return true;
   }
 
-  bool delete() {
-    return false;
+  void delete(QueryDocumentSnapshot value) {
+    try {
+      value.reference.delete();
+    } on FirebaseException catch (e) {
+      print(e);
+    }
   }
 
   bool update() {
