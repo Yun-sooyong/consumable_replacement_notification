@@ -150,8 +150,16 @@ class _HomePageState extends State<HomePage> {
         child: Padding(
           padding: const EdgeInsets.all(4.0),
           child: ListTile(
-            title: Text(documents['title']),
-            subtitle: Text(documents['explane']),
+            title: Text(
+              documents['title'],
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+            subtitle: Text(
+              documents['explane'],
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+            ),
             trailing: DropdownButton<String>(
               icon: const Icon(Icons.more_vert),
               elevation: 4,
