@@ -9,16 +9,24 @@ import 'package:intl/intl.dart';
 
 import '../models/picker_data.dart';
 
-Future<dynamic> showStatefulWidgetBottomSheet(BuildContext context) async {
+Future<dynamic> showStatefulWidgetBottomSheet(
+    {required BuildContext context,
+    bool isUpdate = false,
+    dynamic document}) async {
   await showModalBottomSheet(
       context: context,
       builder: (_) {
-        return const StatefulSheet();
+        return StatefulSheet(
+          isUpdate: isUpdate,
+          document: document,
+        );
       });
 }
 
 class StatefulSheet extends StatefulWidget {
-  const StatefulSheet({super.key});
+  final bool isUpdate;
+  final dynamic document;
+  const StatefulSheet({super.key, required this.isUpdate, this.document});
 
   @override
   State<StatefulSheet> createState() => _StatefulSheet();
@@ -228,7 +236,10 @@ class _StatefulSheet extends State<StatefulSheet> {
                               period: periods,
                             );
 
-                            FireStoreUsage().write(item);
+                            widget.isUpdate == false
+                                ? FireStoreUsage().write(item)
+                                : FireStoreUsage()
+                                    .update(item, widget.document);
 
                             Navigator.pop(context);
                           },

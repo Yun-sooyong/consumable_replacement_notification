@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
         floatingActionButton: FloatingActionButton(
           backgroundColor: Theme.of(context).colorScheme.secondary,
           onPressed: () {
-            showStatefulWidgetBottomSheet(context);
+            showStatefulWidgetBottomSheet(context: context);
           },
           child: const Icon(Icons.add),
         ),
@@ -166,7 +166,11 @@ class _HomePageState extends State<HomePage> {
               underline: Container(height: 0),
               onChanged: (list) {
                 setState(() {
-                  if (list == '수정') {}
+                  if (list == '수정') {
+                    //TODO 수정기능 만들기
+                    showStatefulWidgetBottomSheet(
+                        context: context, isUpdate: true, document: documents);
+                  }
                   if (list == '삭제') {
                     _fireStore.delete(documents);
                     //value.reference.delete();

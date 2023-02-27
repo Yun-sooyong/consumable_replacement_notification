@@ -15,12 +15,20 @@ class FireStoreUsage {
   }
 
   Stream<QuerySnapshot> read() {
-    return _getCollection().snapshots();
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('items')
+        .snapshots();
   }
 
   void write(Item item) {
     try {
-      _getCollection().add(item.toJson());
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .collection('items')
+          .add(item.toJson());
     } on FirebaseException catch (e) {
       print(e);
     }
@@ -34,7 +42,11 @@ class FireStoreUsage {
     }
   }
 
-  bool update() {
-    return false;
+  Future update(Item item, DocumentSnapshot document) async {
+    try {
+      document.reference.update(item.toJson());
+    } on FirebaseException catch (e) {
+      print(e);
+    }
   }
 }
