@@ -51,6 +51,20 @@ class _StatefulSheet extends State<StatefulSheet> {
   DateTime? periodsTime;
 
   @override
+  void initState() {
+    if (widget.isUpdate == true) {
+      var doc = widget.document;
+
+      title = doc['title'];
+      explane = doc['explane'];
+      classifi = doc['classifi'];
+      date = DateTime.parse(doc['date']);
+      periods = doc['period'];
+    }
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
