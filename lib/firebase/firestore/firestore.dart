@@ -5,14 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 class FireStoreUsage {
   FireStoreUsage();
 
-  final String uid = FirebaseAuth.instance.currentUser!.uid;
-
-  CollectionReference _getCollection() {
-    return FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .collection('items');
-  }
+  final String? uid = FirebaseAuth.instance.currentUser!.uid;
 
   Stream<QuerySnapshot> read() {
     return FirebaseFirestore.instance

@@ -39,16 +39,10 @@ class _WelcomePageState extends State<WelcomePage> {
               child: PageView(
                 // TODO : 이후 수정 필요 [PageView]
                 controller: _pageViewController,
-                children: [
-                  Container(
-                    color: Colors.red,
-                  ),
-                  Container(
-                    color: Colors.green,
-                  ),
-                  Container(
-                    color: Colors.blue,
-                  ),
+                children: const [
+                  Placeholder(),
+                  Placeholder(),
+                  Placeholder(),
                 ],
               ),
             ),
@@ -73,13 +67,16 @@ class _WelcomePageState extends State<WelcomePage> {
               height: size.height * 0.05,
               child: OutlinedButton(
                 onPressed: () async {
-                  await GoogleFirebaseAuth().signinWithGoogle().then(
-                        (value) => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const HomePage(),
-                          ),
-                        ),
-                      );
+                  await GoogleFirebaseAuth().signinWithGoogle().then((value) {
+                    if (value == null) {
+                      return null;
+                    }
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const HomePage(),
+                      ),
+                    );
+                  });
                 },
                 style: ButtonStyle(
                   foregroundColor: MaterialStateProperty.all<Color>(

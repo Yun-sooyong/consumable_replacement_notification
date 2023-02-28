@@ -38,6 +38,7 @@ class _SplahPageState extends State<SplahPage> {
     return Scaffold(
       backgroundColor: Colors.grey[200],
       body: const Center(
+        // TODO Add Brand Icon
         child: SizedBox(
           height: 100,
           width: 100,
