@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:consumable_replacement_notification/firebase/firestore/firestore.dart';
+import 'package:consumable_replacement_notification/data/firestore.dart';
 import 'package:consumable_replacement_notification/models/item_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/flutter_picker.dart';
@@ -63,6 +63,7 @@ class _StatefulSheet extends State<StatefulSheet> {
     }
     super.initState();
   }
+  //TODO 입력에 띄어쓰기만 들어가있을 경우 처리
 
   @override
   Widget build(BuildContext context) {

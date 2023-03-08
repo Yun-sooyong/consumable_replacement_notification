@@ -1,9 +1,10 @@
 //Image by <a href="https://www.freepik.com/free-vector/flat-design-colorful-characters-welcoming_5403010.htm#page=2&query=welcome&position=28&from_view=search&track=sph">Freepik</a>
 
-import 'package:consumable_replacement_notification/firebase/auth/google_auth.dart';
+import 'package:consumable_replacement_notification/data/google_auth.dart';
 import 'package:consumable_replacement_notification/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:consumable_replacement_notification/data/localnotification.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:consumable_replacement_notification/firebase/auth/google_auth.dart';
-import 'package:consumable_replacement_notification/firebase/firestore/firestore.dart';
+import 'package:consumable_replacement_notification/data/google_auth.dart';
+import 'package:consumable_replacement_notification/data/firestore.dart';
+import 'package:consumable_replacement_notification/data/localnotification.dart';
 import 'package:consumable_replacement_notification/pages/add_item_page.dart';
 import 'package:consumable_replacement_notification/pages/welcom_page.dart';
 
@@ -24,15 +25,18 @@ class _HomePageState extends State<HomePage> {
 
   late FireStoreUsage _fireStore;
   GoogleFirebaseAuth googleFirebaseAuth = GoogleFirebaseAuth();
+  late Future appInit;
 
   @override
   void initState() {
     _fireStore = FireStoreUsage();
+    appInit = appInitialize(context: context);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    LocalNotification.requestPermission();
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -150,6 +154,10 @@ class _HomePageState extends State<HomePage> {
         child: Padding(
           padding: const EdgeInsets.all(4.0),
           child: ListTile(
+            onTap: () {
+              LocalNotification.sampleNotification(
+                  title: documents['title'], type: documents['classifi']);
+            },
             title: Text(
               documents['title'],
               overflow: TextOverflow.ellipsis,
@@ -188,5 +196,12 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  Future<bool> appInitialize({required BuildContext context}) async {
+    LocalNotification.initialize();
+
+    await Future.delayed(const Duration(milliseconds: 1000), () {});
+    return true;
   }
 }

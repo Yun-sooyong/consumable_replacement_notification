@@ -17,6 +17,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_dotenv: ^5.0.2
+  flutter_local_notifications: ^13.0.0
   flutter_picker: ^2.1.0
   google_sign_in: ^5.4.3
   http: ^0.13.5
