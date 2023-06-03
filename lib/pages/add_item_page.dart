@@ -1,13 +1,11 @@
-import 'dart:convert';
-
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:consumable_replacement_notification/data/firestore.dart';
 import 'package:consumable_replacement_notification/models/item_model.dart';
+import 'package:consumable_replacement_notification/service/awesome_notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:intl/intl.dart';
-
-import '../models/picker_data.dart';
 
 Future<dynamic> showStatefulWidgetBottomSheet(
     {required BuildContext context,
@@ -47,8 +45,9 @@ class _StatefulSheet extends State<StatefulSheet> {
   String? explane;
   int classifi = 0;
   DateTime? date;
-  String periods = ' 년 개월 주';
-  DateTime? periodsTime;
+  String periods = '';
+  int periodsTime = 60;
+  static int id = 0;
 
   @override
   void initState() {
@@ -85,7 +84,7 @@ class _StatefulSheet extends State<StatefulSheet> {
                 ),
                 ToggleSwitch(
                   minWidth: 80.0,
-                  cornerRadius: 20.0,
+                  cornerRadius: 15.0,
                   activeBgColors: [
                     [Theme.of(context).colorScheme.primary],
                     [Theme.of(context).colorScheme.primary],
@@ -98,16 +97,16 @@ class _StatefulSheet extends State<StatefulSheet> {
                   labels: const ['소모품', '기념일'],
                   radiusStyle: true,
                   onToggle: (index) {
-                    // TODO 함수로 정리해서 깔끔하게 해볼것!
                     setState(() {
                       classifi = index!;
                       if (classifi == 1) {
                         periods = '1년';
+                        periodsTime = 12;
                       } else {
-                        periods = ' 년 개월 주';
+                        periods = '';
                       }
                     });
-                    print('switched to: $classifi');
+                    //print('switched to: $classifi');
                   },
                 )
               ],
@@ -207,7 +206,8 @@ class _StatefulSheet extends State<StatefulSheet> {
                   onPressed: classifi == 1
                       ? null
                       : () {
-                          showPickerArray(context);
+                          //showPickerArray(context);
+                          showPickerPeriod(context);
                         },
                   child: const Text('선택 하기'),
                 ),
@@ -239,9 +239,9 @@ class _StatefulSheet extends State<StatefulSheet> {
                     onPressed: title == null ||
                             explane == null ||
                             date == null ||
-                            periods == ' 년 개월 주'
+                            periods == ''
                         ? null
-                        : () {
+                        : () async {
                             // TODO 저장
                             Item item = Item(
                               title: title!,
@@ -249,6 +249,7 @@ class _StatefulSheet extends State<StatefulSheet> {
                               classifi: classifi,
                               date: date!,
                               period: periods,
+                              id: id,
                             );
 
                             widget.isUpdate == false
@@ -256,6 +257,24 @@ class _StatefulSheet extends State<StatefulSheet> {
                                 : FireStoreUsage()
                                     .update(item, widget.document);
 
+                            //TODO notifications
+                            print(await AwesomeNotifications()
+                                .getLocalTimeZoneIdentifier());
+                            await NotificationService.showNotification(
+                              id: id,
+                              title: '짖어서 알려주는 개',
+                              body: '왈왈! $title의 날이 왔어요',
+                              scheduled: true,
+                              // TODO interval 수정
+                              interval: convertMonthToSec(periodsTime),
+                              repeat: true,
+                              category: NotificationCategory.Reminder,
+                              //dateTime: checkDate(date!, periodsTime),
+                            );
+
+                            id += 1;
+
+                            if (!mounted) return;
                             Navigator.pop(context);
                           },
                     child: const Text('저장'),
@@ -320,30 +339,36 @@ class _StatefulSheet extends State<StatefulSheet> {
     );
   }
 
-  showPickerArray(BuildContext context) {
+  showPickerPeriod(BuildContext context) {
     ColorScheme theme = Theme.of(context).colorScheme;
+
     Picker(
-        adapter: PickerDataAdapter<String>(
-          pickerData: const JsonDecoder().convert(pickerData),
-          isArray: true,
-        ),
-        hideHeader: true,
-        backgroundColor: theme.background,
-        height: 230,
-        itemExtent: 50,
-        textScaleFactor: 1.1,
-        title: const Text("교체할 주기를 선택해주세요"),
-        selectedTextStyle: TextStyle(color: theme.primary),
-        //containerColor: Colors.amber,
-        cancelText: '취소',
-        confirmText: '선택',
-        onConfirm: (Picker picker, List value) {
-          setState(() {
-            periods =
-                '${value[0].toString() == '0' ? '' : '${value[0].toString()}년'} ${value[1].toString() == '0' ? '' : '${value[1].toString()}개월'} ${value[2].toString() == '0' ? '' : '${value[2].toString()}주'}';
-          });
-          // TODO 계산을 위해 year / month / week 로 따로 저장할 수도 있음
-        }).showDialog(context);
+      hideHeader: true,
+      adapter: DateTimePickerAdapter(
+        //type: 7,
+        customColumnType: [1],
+        isNumberMonth: true,
+        monthSuffix: '개월',
+      ),
+      height: 230,
+      itemExtent: 50,
+      textScaleFactor: 1.1,
+      title: const Text("교체할 주기를 선택해주세요"),
+      backgroundColor: theme.background,
+      selectedTextStyle: TextStyle(color: theme.primary),
+      onConfirm: (Picker picker, List value) {
+        setState(() {
+          if (value[0] != 11) {
+            periods = '${value[0] + 1}개월';
+          } else {
+            periods = '1년';
+          }
+          periodsTime = value[0] + 1;
+        });
+      },
+      cancelText: '취소',
+      confirmText: '확인',
+    ).showDialog(context);
   }
 
   showPickerDate(BuildContext context) {
@@ -375,5 +400,32 @@ class _StatefulSheet extends State<StatefulSheet> {
       cancelText: '취소',
       confirmText: '확인',
     ).showDialog(context);
+  }
+
+  // 입력된 개월 수를 초로 바꿔주는 함수
+  int convertMonthToSec(int month) {
+    int seconds = 2628288;
+    int monthToSec = month * seconds;
+
+    print('monthToSec: $monthToSec month:$month');
+
+    return monthToSec;
+  }
+
+  // 알람 설정된 날짜보다 item 생성날짜가 늦으면 다음 알람 울릴 날짜로 변경
+  DateTime checkDate(DateTime baseTime, int interval) {
+    var dateTime;
+
+    DateTime now = DateTime.now();
+
+    var diff = baseTime.difference(now);
+    var diffDays = diff.inDays;
+
+    // 현재 날짜가 baseTime을 지났으면 diffDays는 마이너스 값을 가지게 된다
+    if (diffDays < 0) {
+      dateTime = DateTime(baseTime.month + interval);
+    }
+
+    return dateTime;
   }
 }
