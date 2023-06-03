@@ -1,33 +1,35 @@
 import 'package:consumable_replacement_notification/firebase_options.dart';
 import 'package:consumable_replacement_notification/pages/splash_page.dart';
+import 'package:consumable_replacement_notification/service/awesome_notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+  NotificationService.initializeNotification();
   runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: MyApp.navigatorKey,
       debugShowCheckedModeBanner: false,
-      title: '대신 알려주는 게',
+      title: '짖어서 알려주는 개',
       themeMode: ThemeMode.system,
       theme: FlexThemeData.light(
         scheme: FlexScheme.indigo,

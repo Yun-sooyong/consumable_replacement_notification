@@ -17,7 +17,7 @@ class _SplahPageState extends State<SplahPage> {
     super.initState();
     User? result = FirebaseAuth.instance.currentUser;
     Timer(
-      const Duration(milliseconds: 1500),
+      const Duration(milliseconds: 1000),
       () {
         //print(result);
         result == null
@@ -36,7 +36,7 @@ class _SplahPageState extends State<SplahPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Theme.of(context).colorScheme.primary,
       body: const Center(
         // TODO Add Brand Icon
         child: SizedBox(

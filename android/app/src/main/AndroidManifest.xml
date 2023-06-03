@@ -1,7 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.consumable_replacement_notification">
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
    <application
-        android:label="consumable_replacement_notification"
+        android:label="짖어서 알려주는 개"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

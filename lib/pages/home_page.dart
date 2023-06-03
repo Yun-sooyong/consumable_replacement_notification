@@ -1,9 +1,10 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:consumable_replacement_notification/data/google_auth.dart';
 import 'package:consumable_replacement_notification/data/firestore.dart';
-import 'package:consumable_replacement_notification/data/localnotification.dart';
 import 'package:consumable_replacement_notification/pages/add_item_page.dart';
 import 'package:consumable_replacement_notification/pages/welcom_page.dart';
+import 'package:consumable_replacement_notification/service/awesome_notification_service.dart';
 
 import 'package:flutter/material.dart';
 
@@ -16,7 +17,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   List<Widget> tabList = const [
     Tab(text: '전체'),
     Tab(text: '소모품'),
@@ -25,32 +27,40 @@ class _HomePageState extends State<HomePage> {
 
   late FireStoreUsage _fireStore;
   GoogleFirebaseAuth googleFirebaseAuth = GoogleFirebaseAuth();
-  late Future appInit;
+
+  late TabController _tabController;
 
   @override
   void initState() {
     _fireStore = FireStoreUsage();
-    appInit = appInitialize(context: context);
+    _tabController = TabController(length: 3, vsync: this);
     super.initState();
   }
 
   @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    LocalNotification.requestPermission();
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        appBar: _appBar(),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Theme.of(context).colorScheme.secondary,
-          onPressed: () {
-            showStatefulWidgetBottomSheet(context: context);
-          },
-          child: const Icon(Icons.add),
-        ),
-        body: _body(),
+    //LocalNotification.requestPermission();
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      appBar: _appBar(),
+      floatingActionButton: FloatingActionButton(
+        elevation: 3.0,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        onPressed: () {
+          showStatefulWidgetBottomSheet(context: context);
+        },
+        splashColor: Theme.of(context).colorScheme.tertiary,
+        child: const Icon(Icons.edit_calendar_outlined),
       ),
+      body: _body(),
     );
   }
 
@@ -58,7 +68,10 @@ class _HomePageState extends State<HomePage> {
   AppBar _appBar() {
     return AppBar(
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new),
+        icon: Icon(
+          Icons.arrow_back_ios_new,
+          color: Theme.of(context).colorScheme.background,
+        ),
         onPressed: () {
           // TODO Drawer 로 수정 필요
           googleFirebaseAuth.signoutWithGoogle().then(
@@ -72,12 +85,25 @@ class _HomePageState extends State<HomePage> {
               );
         },
       ),
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      titleTextStyle:
+          TextStyle(color: Theme.of(context).colorScheme.background),
       centerTitle: true,
       title: const Text('logo'),
       elevation: 0.0,
       //backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
       bottom: TabBar(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        controller: _tabController,
+        indicator: BoxDecoration(
+            borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0)),
+            color: Theme.of(context).colorScheme.background),
         labelColor: Theme.of(context).colorScheme.primary,
+        labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        unselectedLabelColor: Colors.grey[400],
+        unselectedLabelStyle: const TextStyle(fontSize: 12),
         indicatorColor: Theme.of(context).colorScheme.primary,
         tabs: tabList,
       ),
@@ -102,10 +128,12 @@ class _HomePageState extends State<HomePage> {
               child: Text('Error'),
             );
           } else {
+            // firebase document가 null 일때 비어있는 이미지 출력
             final List<QueryDocumentSnapshot<Object?>> documents =
                 (snapshot.data?.docs)!;
 
             return TabBarView(
+              controller: _tabController,
               children: [
                 ListView.builder(
                   itemCount: documents.length,
@@ -147,17 +175,14 @@ class _HomePageState extends State<HomePage> {
       child: Card(
         borderOnForeground: true,
         shadowColor: Theme.of(context).colorScheme.shadow,
-        color: Theme.of(context).colorScheme.surface,
-        elevation: 7.0,
+        color: Theme.of(context).colorScheme.primary,
+        elevation: 0.0,
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
         child: Padding(
           padding: const EdgeInsets.all(4.0),
           child: ListTile(
-            onTap: () {
-              LocalNotification.sampleNotification(
-                  title: documents['title'], type: documents['classifi']);
-            },
+            textColor: Theme.of(context).colorScheme.background,
             title: Text(
               documents['title'],
               overflow: TextOverflow.ellipsis,
@@ -169,7 +194,10 @@ class _HomePageState extends State<HomePage> {
               maxLines: 2,
             ),
             trailing: DropdownButton<String>(
-              icon: const Icon(Icons.more_vert),
+              icon: Icon(
+                Icons.more_vert,
+                color: Theme.of(context).colorScheme.background,
+              ),
               elevation: 4,
               underline: Container(height: 0),
               onChanged: (list) {
@@ -181,7 +209,10 @@ class _HomePageState extends State<HomePage> {
                   }
                   if (list == '삭제') {
                     _fireStore.delete(documents);
-                    //value.reference.delete();
+                    //TODO
+                    //NotificationService
+                    //AwesomeNotifications().cancelAll();
+                    AwesomeNotifications().cancel(documents['id']);
                   }
                 });
               },
@@ -196,12 +227,5 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-  }
-
-  Future<bool> appInitialize({required BuildContext context}) async {
-    LocalNotification.initialize();
-
-    await Future.delayed(const Duration(milliseconds: 1000), () {});
-    return true;
   }
 }

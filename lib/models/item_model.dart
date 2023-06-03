@@ -15,6 +15,7 @@ class Item {
     required this.classifi,
     required this.date,
     required this.period,
+    required this.id,
   });
 
   String title;
@@ -22,6 +23,7 @@ class Item {
   int classifi;
   DateTime date;
   String period;
+  int id;
 
   factory Item.fromJson(Map<String, dynamic> json) => Item(
         title: json["title"],
@@ -29,6 +31,7 @@ class Item {
         classifi: json["classifi"],
         date: DateTime.parse(json["date"]),
         period: json["period"],
+        id: json["id"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -38,5 +41,6 @@ class Item {
         "date":
             "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}",
         "period": period,
+        "id": id,
       };
 }
